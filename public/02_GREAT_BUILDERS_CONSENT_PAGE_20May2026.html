@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consent Required | FAIR Insurance</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif; background: #F3F4F6; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 40px 20px; }
+        .container { background: #FFFFFF; border-radius: 16px; box-shadow: 0 10px 40px rgba(0,0,0,0.1); max-width: 560px; width: 100%; overflow: hidden; }
+        .header { background: #005055; padding: 28px 32px; text-align: center; }
+        .header h1 { color: #FFFFFF; font-size: 20px; font-weight: 700; }
+        .header p { color: rgba(255,255,255,0.9); font-size: 14px; margin-top: 6px; }
+        .content { padding: 32px; }
+        .company-info { background: #F9FAFB; border-radius: 8px; padding: 14px 16px; margin-bottom: 24px; display: flex; align-items: center; gap: 12px; }
+        .company-icon { width: 36px; height: 36px; background: #005055; border-radius: 6px; color: white; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px; }
+        .company-name { font-weight: 600; color: #1F2937; font-size: 14px; }
+        .data-summary { background: #F0F9FF; border: 1px solid #BAE6FD; border-radius: 8px; padding: 16px; margin-bottom: 24px; text-align: center; }
+        .data-summary p { color: #0C4A6E; font-size: 14px; }
+        .data-summary strong { color: #075985; }
+        .about-section { background: #F9FAFB; border: 1px solid #E5E7EB; border-radius: 10px; padding: 20px; margin-bottom: 24px; }
+        .about-section h3 { font-size: 14px; color: #1F2937; margin-bottom: 14px; }
+        .about-item { display: flex; align-items: flex-start; gap: 10px; padding: 10px 0; border-bottom: 1px solid #E5E7EB; }
+        .about-item:last-child { border-bottom: none; padding-bottom: 0; }
+        .about-item .icon { color: #005055; font-size: 16px; flex-shrink: 0; margin-top: 2px; }
+        .about-item .text { flex: 1; }
+        .about-item .label { font-size: 13px; font-weight: 600; color: #374151; margin-bottom: 2px; }
+        .about-item .desc { font-size: 12px; color: #6B7280; line-height: 1.5; }
+        .consent-section { border: 2px solid #E5E7EB; border-radius: 10px; padding: 20px; margin-bottom: 16px; }
+        .consent-box { cursor: pointer; transition: all 0.2s; padding: 14px; border: 2px solid #E5E7EB; border-radius: 8px; margin-bottom: 14px; }
+        .consent-box:hover { border-color: #005055; background: #EEF6EC; }
+        .consent-box.checked { border-color: #005055; background: #EEF6EC; }
+        .consent-row { display: flex; align-items: flex-start; gap: 14px; }
+        .checkbox { width: 22px; height: 22px; border: 2px solid #9CA3AF; border-radius: 5px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
+        .consent-box.checked .checkbox { background: #005055; border-color: #005055; }
+        .checkbox .check { display: none; color: white; font-size: 14px; }
+        .consent-box.checked .checkbox .check { display: block; }
+        .consent-text { font-size: 13px; color: #374151; line-height: 1.6; }
+        .consent-privacy-link { display: block; margin-top: 12px; font-size: 12px; }
+        .consent-privacy-link a { color: #005055; text-decoration: underline; }
+        .withdraw-section { background: #F9FAFB; border-radius: 8px; padding: 14px 16px; margin-bottom: 24px; }
+        .withdraw-section h4 { font-size: 13px; color: #374151; margin-bottom: 6px; }
+        .withdraw-section p { font-size: 12px; color: #6B7280; line-height: 1.5; }
+        .buttons { display: flex; gap: 12px; }
+        .btn { flex: 1; padding: 14px; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; border: none; text-align: center; text-decoration: none; transition: all 0.2s; }
+        .btn-cancel { background: #F3F4F6; color: #4B5563; }
+        .btn-cancel:hover { background: #E5E7EB; }
+        .btn-confirm { background: #D1D5DB; color: #9CA3AF; pointer-events: none; }
+        .btn-confirm.active { background: #005055; color: white; pointer-events: auto; }
+        .btn-confirm.active:hover { background: #003c40; }
+        .footer { background: #F9FAFB; padding: 16px 32px; text-align: center; border-top: 1px solid #E5E7EB; }
+        .footer p { color: #9CA3AF; font-size: 11px; }
+        .footer a { color: #6B7280; text-decoration: underline; }
+        .success { display: none; text-align: center; padding: 40px 32px; }
+        .success .icon { font-size: 56px; margin-bottom: 16px; }
+        .success h2 { color: #005055; font-size: 20px; margin-bottom: 8px; }
+        .success p { color: #4B5563; font-size: 14px; margin-bottom: 24px; line-height: 1.6; }
+        .success .btn-view { display: inline-block; background: #005055; color: white; padding: 14px 32px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 14px; }
+        .success .btn-view:hover { background: #003c40; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>&#x1F512; View Individual Vehicle Performance</h1>
+            <p>Your consent is required to access individual vehicle information</p>
+        </div>
+        <div class="content" id="formContent">
+            <div class="company-info">
+                <div class="company-icon">GB</div>
+                <div><div class="company-name">Great Builders AS</div></div>
+            </div>
+            <div class="data-summary">
+                <p>You are requesting access to view performance data for all <strong>28 scored vehicles</strong> — <strong style="color: #EF4444;">8 RED</strong>, <strong style="color: #F59E0B;">6 ORANGE</strong>, and <strong style="color: #10B981;">14 GREEN</strong>.</p>
+            </div>
+            <div class="about-section">
+                <h3>About This Data</h3>
+                <div class="about-item"><span class="icon">&#x25CF;</span><div class="text"><div class="label">Purpose Limitation</div><div class="desc">This data will be used solely to identify vehicles for driver coaching and safety improvements. It will not be used for other purposes, such as changes to insurance premiums or employee evaluation, without new and specific consent.</div></div></div>
+                <div class="about-item"><span class="icon">&#x25CF;</span><div class="text"><div class="label">Calculation Period</div><div class="desc">The zone score is based on driving behaviour from the past month.</div></div></div>
+                <div class="about-item"><span class="icon">&#x25CF;</span><div class="text"><div class="label">Data Storage</div><div class="desc">The underlying driving data is stored for 36 months and the zone score is updated monthly.</div></div></div>
+                <div class="about-item"><span class="icon">&#x25CF;</span><div class="text"><div class="label">Scope of Consent</div><div class="desc">Your consent applies to viewing the vehicle performance list, which updates every month as new driving data is recorded.</div></div></div>
+            </div>
+            <div class="consent-section">
+                <div class="consent-box" id="consentBox">
+                    <div class="consent-row">
+                        <div class="checkbox"><span class="check">&#x2713;</span></div>
+                        <div class="consent-text">I consent to the processing of telematics data as described above to view individual vehicle performance by risk zone for driver coaching.</div>
+                    </div>
+                </div>
+                <div class="consent-privacy-link">By giving consent, you agree to the terms described above. For full details, see our <a href="https://faircarinsurance.com/sv/integritetspolicy" target="_blank">Privacy Policy</a>.</div>
+            </div>
+            <div class="withdraw-section">
+                <h4>Right to Withdraw Consent</h4>
+                <p>You have the right to withdraw this consent at any time. If you withdraw consent, you will no longer be able to access detailed information about your vehicles by risk zone.</p>
+                <div style="margin-top: 12px; text-align: center;">
+                    <a href="#" class="btn" style="display: inline-block; background: #ffffff; color: #005055; padding: 10px 20px; border-radius: 6px; font-size: 13px; font-weight: 600; text-decoration: none; border: 1.5px solid #005055;">Withdraw My Consent</a>
+                </div>
+            </div>
+            <div class="buttons">
+                <a href="01_GREAT_BUILDERS_FLEET_REPORT_20May2026.html" class="btn btn-cancel">Cancel</a>
+                <button class="btn btn-confirm" id="confirmBtn">Confirm & View Data</button>
+            </div>
+        </div>
+
+        <div class="success" id="successContent">
+            <div class="icon">&#x2705;</div>
+            <h2>Consent Granted</h2>
+            <p>You now have access to individual vehicle performance data for Great Builders AS. This consent applies to all future monthly updates.</p>
+            <a href="03_GREAT_BUILDERS_VEHICLE_PERFORMANCE_20May2026.html" class="btn-view">View Vehicle Performance</a>
+        </div>
+
+        <div class="footer"><p>FAIR Insurance | <a href="https://faircarinsurance.com/sv/integritetspolicy" target="_blank">Privacy Policy</a> | <a href="#">Contact</a></p></div>
+    </div>
+    <script>
+        const consentBox = document.getElementById('consentBox');
+        const confirmBtn = document.getElementById('confirmBtn');
+        const formContent = document.getElementById('formContent');
+        const successContent = document.getElementById('successContent');
+        let isChecked = false;
+        consentBox.addEventListener('click', () => { isChecked = !isChecked; consentBox.classList.toggle('checked', isChecked); confirmBtn.classList.toggle('active', isChecked); });
+        confirmBtn.addEventListener('click', () => { if (isChecked) { formContent.style.display = 'none'; successContent.style.display = 'block'; } });
+    </script>
+</body>
+</html>

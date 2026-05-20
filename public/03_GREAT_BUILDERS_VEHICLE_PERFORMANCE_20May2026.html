@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vehicle Performance | Great Builders AS</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif; background: #F3F4F6; min-height: 100vh; padding: 40px 20px; }
+        .page { max-width: 680px; margin: 0 auto; }
+        .header { background: #005055; border-radius: 16px 16px 0 0; padding: 28px 32px; text-align: center; }
+        .header h1 { color: #FFFFFF; font-size: 20px; font-weight: 700; }
+        .header p { color: rgba(255,255,255,0.9); font-size: 14px; margin-top: 6px; }
+        .main { background: #FFFFFF; padding: 32px; border-radius: 0 0 16px 16px; box-shadow: 0 10px 40px rgba(0,0,0,0.08); }
+        .company-bar { display: flex; align-items: center; gap: 12px; background: #F9FAFB; border-radius: 8px; padding: 14px 16px; margin-bottom: 24px; }
+        .company-icon { width: 40px; height: 40px; background: #005055; border-radius: 8px; color: white; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 15px; flex-shrink: 0; }
+        .company-text .name { font-weight: 600; color: #1F2937; font-size: 15px; }
+        .company-text .sub { color: #6B7280; font-size: 12px; margin-top: 2px; }
+        .summary-row { display: flex; gap: 12px; margin-bottom: 20px; }
+        .summary-card { flex: 1; text-align: center; padding: 16px 8px; border-radius: 10px; border: 1px solid #E5E7EB; }
+        .summary-card .num { font-size: 28px; font-weight: 800; line-height: 1; }
+        .summary-card .label { font-size: 11px; color: #6B7280; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 4px; }
+        .dist-bar { height: 14px; border-radius: 7px; overflow: hidden; display: flex; margin-bottom: 6px; }
+        .dist-note { font-size: 11px; color: #9CA3AF; margin-bottom: 28px; }
+        .zone-section { margin-bottom: 24px; }
+        .zone-header { font-size: 13px; font-weight: 700; padding: 10px 14px; border-radius: 8px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; }
+        .zone-red { background: #FEF2F2; color: #991B1B; border: 1px solid #FECACA; }
+        .zone-orange { background: #FFFBEB; color: #92400E; border: 1px solid #FDE68A; }
+        .zone-green { background: #F0FDF4; color: #065F46; border: 1px solid #BBF7D0; }
+        .zone-count { font-size: 11px; font-weight: 600; opacity: 0.7; }
+        .vehicle-card { background: #FFFFFF; border: 1px solid #E5E7EB; border-radius: 10px; padding: 16px; margin-bottom: 10px; transition: box-shadow 0.2s; }
+        .vehicle-card:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+        .v-top { display: flex; align-items: center; margin-bottom: 12px; }
+        .v-reg { font-size: 14px; font-weight: 700; color: #1F2937; width: 80px; flex-shrink: 0; }
+        .v-model { flex: 1; font-size: 13px; color: #6B7280; }
+        .v-badge { display: inline-block; padding: 3px 10px; border-radius: 12px; font-size: 12px; font-weight: 700; }
+        .badge-red { background: #FEF2F2; color: #EF4444; }
+        .badge-orange { background: #FFFBEB; color: #F59E0B; }
+        .badge-green { background: #F0FDF4; color: #10B981; }
+        .v-components { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 16px; }
+        .comp-row { display: flex; align-items: center; gap: 8px; }
+        .comp-label { font-size: 11px; color: #9CA3AF; width: 65px; flex-shrink: 0; }
+        .comp-bar { flex: 1; background: #F3F4F6; border-radius: 4px; height: 6px; overflow: hidden; }
+        .comp-fill { height: 100%; border-radius: 4px; }
+        .comp-val { font-size: 11px; font-weight: 700; width: 24px; text-align: right; flex-shrink: 0; }
+        .back-link { display: inline-block; margin-top: 20px; color: #005055; font-size: 13px; font-weight: 600; text-decoration: none; }
+        .back-link:hover { text-decoration: underline; }
+        .footer { text-align: center; padding: 20px; margin-top: 8px; }
+        .footer p { color: #9CA3AF; font-size: 11px; }
+        .footer a { color: #6B7280; text-decoration: underline; }
+        .legend { display: flex; justify-content: center; gap: 16px; margin-bottom: 28px; padding: 10px; background: #F9FAFB; border-radius: 8px; }
+        .legend-item { display: flex; align-items: center; gap: 4px; font-size: 11px; color: #6B7280; }
+        .legend-dot { width: 8px; height: 8px; border-radius: 50%; }
+    </style>
+</head>
+<body>
+    <div class="page">
+        <div class="header">
+            <h1>Individual Vehicle Performance</h1>
+            <p>Great Builders AS — April 2026</p>
+        </div>
+        <div class="main">
+            <div class="company-bar">
+                <div class="company-icon">GB</div>
+                <div class="company-text">
+                    <div class="name">Great Builders AS</div>
+                    <div class="sub">28 scored vehicles of 32 — Fleet Risk Index: 47 (ORANGE)</div>
+                </div>
+            </div>
+
+            <div class="summary-row">
+                <div class="summary-card">
+                    <div class="num" style="color: #10B981;">14</div>
+                    <div class="label">Green</div>
+                </div>
+                <div class="summary-card">
+                    <div class="num" style="color: #F59E0B;">6</div>
+                    <div class="label">Orange</div>
+                </div>
+                <div class="summary-card">
+                    <div class="num" style="color: #EF4444;">8</div>
+                    <div class="label">Red</div>
+                </div>
+            </div>
+
+            <div class="dist-bar">
+                <div style="background: #10B981; width: 50%;"></div>
+                <div style="background: #F59E0B; width: 21%;"></div>
+                <div style="background: #EF4444; width: 29%;"></div>
+            </div>
+            <div class="dist-note">Fleet distribution by risk zone</div>
+
+            <div class="legend">
+                <div class="legend-item"><div class="legend-dot" style="background: #10B981;"></div>Score 70+ (strong)</div>
+                <div class="legend-item"><div class="legend-dot" style="background: #F59E0B;"></div>Score 50–69 (improving)</div>
+                <div class="legend-item"><div class="legend-dot" style="background: #EF4444;"></div>Score below 50 (focus area)</div>
+            </div>
+
+            <!-- ═══════════ RED ZONE ═══════════ -->
+            <div class="zone-section">
+                <div class="zone-header zone-red">
+                    <span>RED ZONE — Risk Index 55+</span>
+                    <span class="zone-count">8 vehicles</span>
+                </div>
+
+                <div class="vehicle-card">
+                    <div class="v-top">
+                        <span class="v-reg">DN84521</span>
+                        <span class="v-model">Ford Transit Custom</span>
+                        <span class="v-badge badge-red">85</span>
+                    </div>
+                    <div class="v-components">
+                        <div class="comp-row"><span class="comp-label">Smoothness</span><div class="comp-bar"><div class="comp-fill" style="width:48%; background:#EF4444;"></div></div><span class="comp-val" style="color:#EF4444;">48</span></div>
+                        <div class="comp-row"><span class="comp-label">Braking</span><div class="comp-bar"><div class="comp-fill" style="width:52%; background:#F59E0B;"></div></div><span class="comp-val" style="color:#F59E0B;">52</span></div>
+                        <div class="comp-row"><span class="comp-label">Cornering</span><div class="comp-bar"><div class="comp-fill" style="width:40%; background:#EF4444;"></div></div><span class="comp-val" style="color:#EF4444;">40</span></div>
+                        <div class="comp-row"><span class="comp-label">Roads</span><div class="comp-bar"><div class="comp-fill" style="width:30%; background:#EF4444;"></div></div><span class="comp-val" style="color:#EF4444;">30</span></div>
+                    </div>
+                </div>
+
+                <div class="vehicle-card">
+                    <div class="v-top">
+                        <span class="v-reg">CF92374</span>
+                        <span class="v-model">Mercedes Sprinter</span>
+                        <span class="v-badge badge-red">78</span>
+                    </div>
+                    <div class="v-components">
+                        <div class="comp-row"><span class="comp-label">Smoothness</span><div class="comp-bar"><div class="comp-fill" style="width:52%; background:#F59E0B;"></div></div><span class="comp-val" style="color:#F59E0B;">52</span></div>
+                        <div class="comp-row"><span class="comp-label">Braking</span><div class="comp-bar"><div class="comp-fill" style="width:55%; background:#F59E0B;"></div></div><span class="comp-val" style="color:#F59E0B;">55</span></div>
+                        <div class="comp-row"><span class="comp-label">Cornering</span><div class="comp-bar"><div class="comp-fill" style="width:45%; background:#EF4444;"></div></div><span class="comp-val" style="color:#EF4444;">45</span></div>
+                        <div class="comp-row"><span class="comp-label">Roads</span><div class="comp-bar"><div class="comp-fill" style="width:35%; background:#EF4444;"></div></div><span class="comp-val" style="color:#EF4444;">35</span></div>
+                    </div>
+                </div>
+
+                <div class="vehicle-card">
+                    <div class="v-top">
+                        <span class="v-reg">BK61208</span>
+                        <span class="v-model">Toyota Proace</span>
+                        <span class="v-badge badge-red">72</span>
+                    </div>
+                    <div class="v-components">
+                        <div class="comp-row"><span class="comp-label">Smoothness</span><div class="comp-bar"><div class="comp-fill" style="width:58%; background:#F59E0B;"></div></div><span class="comp-val" style="color:#F59E0B;">58</span></div>
+                        <div class="comp-row"><span class="comp-label">Braking</span><div class="comp-bar"><div class="comp-fill" style="width:60%; background:#F59E0B;"></div></div><span class="comp-val" style="color:#F59E0B;">60</span></div>
+                        <div class="comp-row"><span class="comp-label">Cornering</span><div class="comp-bar"><div class="comp-fill" style="width:48%; background:#EF4444;"></div></div><span class="comp-val" style="color:#EF4444;">48</span></div>
+                        <div class="comp-row"><span class="comp-label">Roads</span><div class="comp-bar"><div class="comp-fill" style="width:38%; background:#EF4444;"></div></div><span class="comp-val" style="color:#EF4444;">38</span></div>
+                    </div>
+                </div>
+
+                <div class="vehicle-card">
+                    <div class="v-top">
+                        <span class="v-reg">EK44891</span>
+                        <span class="v-model">Ford Transit Custom</span>
+                        <span class="v-badge badge-red">68</span>
+                    </div>
+                    <div class="v-components">
+                        <div class="comp-row"><span class="comp-label">Smoothness</span><div class="comp-bar"><div class="comp-fill" style="width:60%; background:#F59E0B;"></div></div><span class="comp-val" style="color:#F59E0B;">60</span></div>
+                        <div class="comp-row"><span class="comp-label">Braking</span><div class="comp-bar"><div class="comp-fill" style="width:62%; background:#F59E0B;"></div></div><span class="comp-val" style="color:#F59E0B;">62</span></div>
+                        <div class="comp-row"><span class="comp-label">Cornering</span><div class="comp-bar"><div class="comp-fill" style="width:50%; background:#F59E0B;"></div></div><span class="comp-val" style="color:#F59E0B;">50</span></div>
+                        <div class="comp-row"><span class="comp-label">Roads</span><div class="comp-bar"><div class="comp-fill" style="width:40%; background:#EF4444;"></div></div><span class="comp-val" style="color:#EF4444;">40</span></div>
+                    </div>
+                </div>
+
+                <div class="vehicle-card">
+                    <div class="v-top">
+                        <span class="v-reg">DR73502</span>
+                        <span class="v-model">VW Transporter T6.1</span>
+                        <span class="v-badge badge-red">65</span>
+                    </div>
+                    <div class="v-components">
+                        <div class="comp-row"><span class="comp-label">Smoothness</span><div class="comp-bar"><div class="comp-fill" style="width:62%; background:#F59E0B;"></div></div><span class="comp-val" style="color:#F59E0B;">62</span></div>
+                        <div class="comp-row"><span class="comp-label">Braking</span><div class="comp-bar"><div class="comp-fill" style="width:64%; background:#F59E0B;"></div></div><span class="comp-val" style="color:#F59E0B;">64</span></div>
+                        <div class="comp-row"><span class="comp-label">Cornering</span><div class="comp-bar"><div class="comp-fill" style="width:52%; background:#F59E0B;"></div></div><span class="comp-val" style="color:#F59E0B;">52</span></div>
+                        <div class="comp-row"><span class="comp-label">Roads</span><div class="comp-bar"><div class="comp-fill" style="width:42%; background:#EF4444;"></div></div><span class="comp-val" style="color:#EF4444;">42</span></div>
+                    </div>
+                </div>
+
+                <div class="vehicle-card">
+                    <div class="v-top">
+                        <span class="v-reg">CF28167</span>
+                        <span class="v-model">Mercedes Sprinter</span>
+                        <span class="v-badge badge-red">62</span>
+                    </div>
+                    <div class="v-components">
+                        <div class="comp-row"><span class="comp-label">Smoothness</span><div class="comp-bar"><div class="comp-fill" style="width:64%; background:#F59E0B;"></div></div><span class="comp-val" style="color:#F59E0B;">64</span></div>
+                        <div class="comp-row"><span class="comp-label">Braking</span><div class="comp-bar"><div class="comp-fill" style="width:66%; background:#F59E0B;"></div></div><span class="comp-val" style="color:#F59E0B;">66</span></div>
+                        <div class="comp-row"><span class="comp-label">Cornering</span><div class="comp-bar"><div class="comp-fill" style="width:55%; background:#F59E0B;"></div></div><span class="comp-val" style="color:#F59E0B;">55</span></div>
+                        <div class="comp-row"><span class="comp-label">Roads</span><div class="comp-bar"><div class="comp-fill" style="width:44%; background:#EF4444;"></div></div><span class="comp-val" style="color:#EF4444;">44</span></div>
+                    </div>
+                </div>
+
+                <div class="vehicle-card">
+                    <div class="v-top">
+                        <span class="v-reg">BL55903</span>
+                        <span class="v-model">Toyota Proace</span>
+                        <span class="v-badge badge-red">58</span>
+                    </div>
+                    <div class="v-components">
+                        <div class="comp-row"><span class="comp-label">Smoothness</span><div class="comp-bar"><div class="comp-fill" style="width:68%; background:#F59E0B;"></div></div><span class="comp-val" style="color:#F59E0B;">68</span></div>
+                        <div class="comp-row"><span class="comp-label">Braking</span><div class="comp-bar"><div class="comp-fill" style="width:70%; background:#10B981;"></div></div><span class="comp-val" style="color:#10B981;">70</span></div>
+                        <div class="comp-row"><span class="comp-label">Cornering</span><div class="comp-bar"><div class="comp-fill" style="width:55%; background:#F59E0B;"></div></div><span class="comp-val" style="color:#F59E0B;">55</span></div>
+                        <div class="comp-row"><span class="comp-label">Roads</span><div class="comp-bar"><div class="comp-fill" style="width:44%; background:#EF4444;"></div></div><span class="comp-val" style="color:#EF4444;">44</span></div>
+                    </div>
+                </div>
+
+                <div class="vehicle-card">
+                    <div class="v-top">
+                        <span class="v-reg">EK91246</span>
+                        <span class="v-model">Ford Transit Custom</span>
+                        <span class="v-badge badge-red">56</span>
+                    </div>
+                    <div class="v-components">
+                        <div class="comp-row"><span class="comp-label">Smoothness</span><div class="comp-bar"><div class="comp-fill" style="width:70%; background:#10B981;"></div></div><span class="comp-val" style="color:#10B981;">70</span></div>
+                        <div class="comp-row"><span class="comp-label">Braking</span><div class="comp-bar"><div class="comp-fill" style="width:72%; background:#10B981;"></div></div><span class="comp-val" style="color:#10B981;">72</span></div>
+                        <div class="comp-row"><span class="comp-label">Cornering</span><div class="comp-bar"><div class="comp-fill" style="width:58%; background:#F59E0B;"></div></div><span class="comp-val" style="color:#F59E0B;">58</span></div>
+                        <div class="comp-row"><span class="comp-label">Roads</span><div class="comp-bar"><div class="comp-fill" style="width:42%; background:#EF4444;"></div></div><span class="comp-val" style="color:#EF4444;">42</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ═══════════ ORANGE ZONE ═══════════ -->
+            <div class="zone-section">
+                <div class="zone-header zone-orange">
+                    <span>ORANGE ZONE — Risk Index 42–54</span>
+                    <span class="zone-count">6 vehicles</span>
+                </div>
+
+                <div class="vehicle-card">
+                    <div class="v-top">
+                        <span class="v-reg">DR58924</span>
+                        <span class="v-model">VW Transporter T6.1</span>
+                        <span class="v-badge badge-orange">53</span>
+                    </div>
+                    <div class="v-components">
+                        <div class="comp-row"><span class="comp-label">Smoothness</span><div class="comp-bar"><div class="comp-fill" style="width:74%; background:#10B981;"></div></div><span class="comp-val" style="color:#10B981;">74</span></div>
+                        <div class="comp-row"><span class="comp-label">Braking</span><div class="comp-bar"><div class="comp-fill" style="width:72%; background:#10B981;"></div></div><span class="comp-val" style="color:#10B981;">72</span></div>
+                        <div class="comp-row"><span class="comp-label">Cornering</span><div class="comp-bar"><div class="comp-fill" style="width:60%; background:#F59E0B;"></div></div><span class="comp-val" style="color:#F59E0B;">60</span></div>
+                        <div class="comp-row"><span class="comp-label">Roads</span><div class="comp-bar"><div class="comp-fill" style="width:48%; background:#EF4444;"></div></div><span class="comp-val" style="color:#EF4444;">48</span></div>
+                    </div>
+                </div>
+
+                <div class="vehicle-card">
+                    <div class="v-top">
+                        <span class="v-reg">CF41083</span>
+                        <span class="v-model">Mercedes Sprinter</span>
+                        <span class="v-badge badge-orange">50</span>
+                    </div>
+                    <div class="v-components">
+                        <div class="comp-row"><span class="comp-label">Smoothness</span><div class="comp-bar"><div class="comp-fill" style="width:72%; background:#10B981;"></div></div><span class="comp-val" style="color:#10B981;">72</span></div>
+                        <div class="comp-row"><span class="comp-label">Braking</span><div class="comp-bar"><div class="comp-fill" style="width:76%; background:#10B981;"></div></div><span class="comp-val" style="color:#10B981;">76</span></div>
+                        <div class="comp-row"><span class="comp-label">Cornering</span><div class="comp-bar"><div class="comp-fill" style="width:62%; background:#F59E0B;"></div></div><span class="comp-val" style="color:#F59E0B;">62</span></div>
+                        <div class="comp-row"><span class="comp-label">Roads</span><div class="comp-bar"><div class="comp-fill" style="width:50%; background:#F59E0B;"></div></div><span class="comp-val" style="color:#F59E0B;">50</span></div>
+                    </div>
+                </div>
+
+                <div class="vehicle-card">
+                    <div class="v-top">
+                        <span class="v-reg">BL93267</span>
+                        <span class="v-model">Toyota Proace</span>
+                        <span class="v-badge badge-orange">48</span>
+                    </div>
+                    <div class="v-components">
+                        <div class="comp-row"><span class="comp-label">Smoothness</span><div class="comp-bar"><div class="comp-fill" style="width:76%; background:#10B981;"></div></div><span class="comp-val" style="color:#10B981;">76</span></div>
+                        <div class="comp-row"><span class="comp-label">Braking</span><div class="comp-bar"><div class="comp-fill" style="width:78%; background:#10B981;"></div></div><span class="comp-val" style="color:#10B981;">78</span></div>
+                        <div class="comp-row"><span class="comp-label">Cornering</span><div class="comp-bar"><div class="comp-fill" style="width:64%; background:#F59E0B;"></div></div><span class="comp-val" style="color:#F59E0B;">64</span></div>
+                        <div class="comp-row"><span class="comp-label">Roads</span><div class="comp-bar"><div class="comp-fill" style="width:52%; background:#F59E0B;"></div></div><span class="comp-val" style="color:#F59E0B;">52</span></div>
+                    </div>
+                </div>
+
+                <div class="vehicle-card">
+                    <div class="v-top">
+                        <span class="v-reg">EK62415</span>
+                        <span class="v-model">Ford Transit Custom</span>
+                        <span class="v-badge badge-orange">46</span>
+                    </div>
+                    <div class="v-components">
+                        <div class="comp-row"><span class="comp-label">Smoothness</span><div class="comp-bar"><div class="comp-fill" style="width:78%; background:#10B981;"></div></div><span class="comp-val" style="color:#10B981;">78</span></div>
+                        <div class="comp-row"><span class="comp-label">Braking</span><div class="comp-bar"><div class="comp-fill" style="width:80%; background:#10B981;"></div></div><span class="comp-val" style="color:#10B981;">80</span></div>
+                        <div class="comp-row"><span class="comp-label">Cornering</span><div class="comp-bar"><div class="comp-fill" style="width:65%; background:#F59E0B;"></div></div><span class="comp-val" style="color:#F59E0B;">65</span></div>
+                        <div class="comp-row"><span class="comp-label">Roads</span><div class="comp-bar"><div class="comp-fill" style="width:50%; background:#F59E0B;"></div></div><span class="comp-val" style="color:#F59E0B;">50</span></div>
+                    </div>
+                </div>
+
+                <div class="vehicle-card">
+                    <div class="v-top">
+                        <span class="v-reg">DR17839</span>
+                        <span class="v-model">Volvo XC60</span>
+                        <span class="v-badge badge-orange">44</span>
+                    </div>
+                    <div class="v-components">
+                        <div class="comp-row"><span class="comp-label">Smoothness</span><div class="comp-bar"><div class="comp-fill" style="width:80%; background:#10B981;"></div></div><span class="comp-val" style="color:#10B981;">80</span></div>
+                        <div class="comp-row"><span class="comp-label">Braking</span><div class="comp-bar"><div class="comp-fill" style="width:80%; background:#10B981;"></div></div><span class="comp-val" style="color:#10B981;">80</span></div>
+                        <div class="comp-row"><span class="comp-label">Cornering</span><div class="comp-bar"><div class="comp-fill" style="width:68%; background:#F59E0B;"></div></div><span class="comp-val" style="color:#F59E0B;">68</span></div>
+                        <div class="comp-row"><span class="comp-label">Roads</span><div class="comp-bar"><div class="comp-fill" style="width:52%; background:#F59E0B;"></div></div><span class="comp-val" style="color:#F59E0B;">52</span></div>
+                    </div>
+                </div>
+
+                <div class="vehicle-card">
+                    <div class="v-top">
+                        <span class="v-reg">CF59201</span>
+                        <span class="v-model">VW Transporter T6.1</span>
+                        <span class="v-badge badge-orange">42</span>
+                    </div>
+                    <div class="v-components">
+                        <div class="comp-row"><span class="comp-label">Smoothness</span><div class="comp-bar"><div class="comp-fill" style="width:80%; background:#10B981;"></div></div><span class="comp-val" style="color:#10B981;">80</span></div>
+                        <div class="comp-row"><span class="comp-label">Braking</span><div class="comp-bar"><div class="comp-fill" style="width:82%; background:#10B981;"></div></div><span class="comp-val" style="color:#10B981;">82</span></div>
+                        <div class="comp-row"><span class="comp-label">Cornering</span><div class="comp-bar"><div class="comp-fill" style="width:65%; background:#F59E0B;"></div></div><span class="comp-val" style="color:#F59E0B;">65</span></div>
+                        <div class="comp-row"><span class="comp-label">Roads</span><div class="comp-bar"><div class="comp-fill" style="width:55%; background:#F59E0B;"></div></div><span class="comp-val" style="color:#F59E0B;">55</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ═══════════ GREEN ZONE ═══════════ -->
+            <div class="zone-section">
+                <div class="zone-header zone-green">
+                    <span>GREEN ZONE — Risk Index 0–41</span>
+                    <span class="zone-count">14 vehicles</span>
+                </div>
+
+                <div class="vehicle-card">
+                    <div class="v-top">
+                        <span class="v-reg">BK84572</span>
+                        <span class="v-model">Toyota Proace</span>
+                        <span class="v-badge badge-green">40</span>
+                    </div>
+                    <div class="v-components">
+                        <div class="comp-row"><span class="comp-label">Smoothness</span><div class="comp-bar"><div class="comp-fill" style="width:82%; background:#10B981;"></div></div><span class="comp-val" style="color:#10B981;">82</span></div>
+                        <div class="comp-row"><span class="comp-label">Braking</span><div class="comp-bar"><div class="comp-fill" style="width:84%; background:#10B981;"></div></div><span class="comp-val" style="color:#10B981;">84</span></div>
+                        <div class="comp-row"><span class="comp-label">Cornering</span><div class="comp-bar"><div class="comp-fill" style="width:70%; background:#10B981;"></div></div><span class="comp-val" style="color:#10B981;">70</span></div>
+                        <div class="comp-row"><span class="comp-label">Roads</span><div class="comp-bar"><div class="comp-fill" style="width:58%; background:#F59E0B;"></div></div><span class="comp-val" style="color:#F59E0B;">58</span></div>
+                    </div>
+                </div>
+
+                <div class="vehicle-card">
+                    <div class="v-top">
+                        <span class="v-reg">EK35698</span>
+                        <span class="v-model">Ford Transit Custom</span>
+                        <span class="v-badge badge-green">38</span>
+                    </div>
+                    <div class="v-components">
+                        <div class="comp-row"><span class="comp-label">Smoothness</span><div class="comp-bar"><div class="comp-fill" style="width:84%; background:#10B981;"></div></div><span class="comp-val" style="color:#10B981;">84</span></div>
+                        <div class="comp-row"><span class="comp-label">Braking</span><div class="comp-bar"><div class="comp-fill" style="width:86%; background:#10B981;"></div></div><span class="comp-val" style="color:#10B981;">86</span></div>
+                        <div class="comp-row"><span class="comp-label">Cornering</span><div class="comp-bar"><div class="comp-fill" style="width:72%; background:#10B981;"></div></div><span class="comp-val" style="color:#10B981;">72</span></div>
+                        <div class="comp-row"><span class="comp-label">Roads</span><div class="comp-bar"><div class="comp-fill" style="width:60%; background:#F59E0B;"></div></div><span class="comp-val" style="color:#F59E0B;">60</span></div>
+                    </div>
+                </div>
+
+                <div class="vehicle-card">
+                    <div class="v-top">
+                        <span class="v-reg">DR96341</span>
+                        <span class="v-model">Volvo XC60</span>
+                        <span class="v-badge badge-green">36</span>
+                    </div>
+                    <div class="v-components">
+                        <div class="comp-row"><span class="comp-label">Smoothness</span><div class="comp-bar"><div class="comp-fill" style="width:86%; background:#10B981;"></div></div><span class="comp-val" style="color:#10B981;">86</span></div>
+                        <div class="comp-row"><span class="comp-label">Braking</span><div class="comp-bar"><div class="comp-fill" style="width:84%; background:#10B981;"></div></div><span class="comp-val" style="color:#10B981;">84</span></div>
+                        <div class="comp-row"><span class="comp-label">Cornering</span><div class="comp-bar"><div class="comp-fill" style="width:74%; background:#10B981;"></div></div><span class="comp-val" style="color:#10B981;">74</span></div>
+                        <div class="comp-row"><span class="comp-label">Roads</span><div class="comp-bar"><div class="comp-fill" style="width:62%; background:#F59E0B;"></div></div><span class="comp-val" style="color:#F59E0B;">62</span></div>
+                    </div>
+                </div>
+
+                <div class="vehicle-card">
+                    <div class="v-top">
+                        <span class="v-reg">CF72108</span>
+                        <span class="v-model">Toyota Proace</span>
+                        <span class="v-badge badge-green">34</span>
+                    </div>
+                    <div class="v-components">
+                        <div class="comp-row"><span class="comp-label">Smoothness</span><div class="comp-bar"><div class="comp-fill" style="width:85%; background:#10B981;"></div></div><span class="comp-val" style="color:#10B981;">85</span></div>
+                        <div class="comp-row"><span class="comp-label">Braking</span><div class="comp-bar"><div class="comp-fill" style="width:88%; background:#10B981;"></div></div><span class="comp-val" style="color:#10B981;">88</span></div>
+                        <div class="comp-row"><span class="comp-label">Cornering</span><div class="comp-bar"><div class="comp-fill" style="width:75%; background:#10B981;"></div></div><span class="comp-val" style="color:#10B981;">75</span></div>
+                        <div class="comp-row"><span class="comp-label">Roads</span><div class="comp-bar"><div class="comp-fill" style="width:64%; background:#F59E0B;"></div></div><span class="comp-val" style="color:#F59E0B;">64</span></div>
+                    </div>
+                </div>
+
+                <div class="vehicle-card">
+                    <div class="v-top">
+                        <span class="v-reg">BL46829</span>
+                        <span class="v-model">VW Transporter T6.1</span>
+                        <span class="v-badge badge-green">32</span>
+                    </div>
+                    <div class="v-components">
+                        <div class="comp-row"><span class="comp-label">Smoothness</span><div class="comp-bar"><div class="comp-fill" style="width:88%; background:#10B981;"></div></div><span class="comp-val" style="color:#10B981;">88</span></div>
+                        <div class="comp-row"><span class="comp-label">Braking</span><div class="comp-bar"><div class="comp-fill" style="width:86%; background:#10B981;"></div></div><span class="comp-val" style="color:#10B981;">86</span></div>
+                        <div class="comp-row"><span class="comp-label">Cornering</span><div class="comp-bar"><div class="comp-fill" style="width:78%; background:#10B981;"></div></div><span class="comp-val" style="color:#10B981;">78</span></div>
+                        <div class="comp-row"><span class="comp-label">Roads</span><div class="comp-bar"><div class="comp-fill" style="width:65%; background:#F59E0B;"></div></div><span class="comp-val" style="color:#F59E0B;">65</span></div>
+                    </div>
+                </div>
+
+                <div class="vehicle-card">
+                    <div class="v-top">
+                        <span class="v-reg">EK18573</span>
+                        <span class="v-model">Ford Transit Custom</span>
+                        <span class="v-badge badge-green">30</span>
+                    </div>
+                    <div class="v-components">
+                        <div class="comp-row"><span class="comp-label">Smoothness</span><div class="comp-bar"><div class="comp-fill" style="width:86%; background:#10B981;"></div></div><span class="comp-val" style="color:#10B981;">86</span></div>
+                        <div class="comp-row"><span class="comp-label">Braking</span><div class="comp-bar"><div class="comp-fill" style="width:90%; background:#10B981;"></div></div><span class="comp-val" style="color:#10B981;">90</span></div>
+                        <div class="comp-row"><span class="comp-label">Cornering</span><div class="comp-bar"><div class="comp-fill" style="width:78%; background:#10B981;"></div></div><span class="comp-val" style="color:#10B981;">78</span></div>
+                        <div class="comp-row"><span class="comp-label">Roads</span><div class="comp-bar"><div class="comp-fill" style="width:68%; background:#F59E0B;"></div></div><span class="comp-val" style="color:#F59E0B;">68</span></div>
+                    </div>
+                </div>
+
+                <div class="vehicle-card">
+                    <div class="v-top">
+                        <span class="v-reg">DR63047</span>
+                        <span class="v-model">Mercedes Sprinter</span>
+                        <span class="v-badge badge-green">28</span>
+                    </div>
+                    <div class="v-components">
+                        <div class="comp-row"><span class="comp-label">Smoothness</span><div class="comp-bar"><div class="comp-fill" style="width:88%; background:#10B981;"></div></div><span class="comp-val" style="color:#10B981;">88</span></div>
+                        <div class="comp-row"><span class="comp-label">Braking</span><div class="comp-bar"><div class="comp-fill" style="width:88%; background:#10B981;"></div></div><span class="comp-val" style="color:#10B981;">88</span></div>
+                        <div class="comp-row"><span class="comp-label">Cornering</span><div class="comp-bar"><div class="comp-fill" style="width:80%; background:#10B981;"></div></div><span class="comp-val" style="color:#10B981;">80</span></div>
+                        <div class="comp-row"><span class="comp-label">Roads</span><div class="comp-bar"><div class="comp-fill" style="width:70%; background:#10B981;"></div></div><span class="comp-val" style="color:#10B981;">70</span></div>
+                    </div>
+                </div>
+
+                <div class="vehicle-card">
+                    <div class="v-top">
+                        <span class="v-reg">CF95182</span>
+                        <span class="v-model">Toyota Proace</span>
+                        <span class="v-badge badge-green">26</span>
+                    </div>
+                    <div class="v-components">
+                        <div class="comp-row"><span class="comp-label">Smoothness</span><div class="comp-bar"><div class="comp-fill" style="width:90%; background:#10B981;"></div></div><span class="comp-val" style="color:#10B981;">90</span></div>
+                        <div class="comp-row"><span class="comp-label">Braking</span><div class="comp-bar"><div class="comp-fill" style="width:88%; background:#10B981;"></div></div><span class="comp-val" style="color:#10B981;">88</span></div>
+                        <div class="comp-row"><span class="comp-label">Cornering</span><div class="comp-bar"><div class="comp-fill" style="width:82%; background:#10B981;"></div></div><span class="comp-val" style="color:#10B981;">82</span></div>
+                        <div class="comp-row"><span class="comp-label">Roads</span><div class="comp-bar"><div class="comp-fill" style="width:72%; background:#10B981;"></div></div><span class="comp-val" style="color:#10B981;">72</span></div>
+                    </div>
+                </div>
+
+                <div class="vehicle-card">
+                    <div class="v-top">
+                        <span class="v-reg">BK37651</span>
+                        <span class="v-model">Volvo XC60</span>
+                        <span class="v-badge badge-green">24</span>
+                    </div>
+                    <div class="v-components">
+                        <div class="comp-row"><span class="comp-label">Smoothness</span><div class="comp-bar"><div class="comp-fill" style="width:88%; background:#10B981;"></div></div><span class="comp-val" style="color:#10B981;">88</span></div>
+                        <div class="comp-row"><span class="comp-label">Braking</span><div class="comp-bar"><div class="comp-fill" style="width:92%; background:#10B981;"></div></div><span class="comp-val" style="color:#10B981;">92</span></div>
+                        <div class="comp-row"><span class="comp-label">Cornering</span><div class="comp-bar"><div class="comp-fill" style="width:82%; background:#10B981;"></div></div><span class="comp-val" style="color:#10B981;">82</span></div>
+                        <div class="comp-row"><span class="comp-label">Roads</span><div class="comp-bar"><div class="comp-fill" style="width:74%; background:#10B981;"></div></div><span class="comp-val" style="color:#10B981;">74</span></div>
+                    </div>
+                </div>
+
+                <div class="vehicle-card">
+                    <div class="v-top">
+                        <span class="v-reg">EK82409</span>
+                        <span class="v-model">Ford Transit Custom</span>
+                        <span class="v-badge badge-green">22</span>
+                    </div>
+                    <div class="v-components">
+                        <div class="comp-row"><span class="comp-label">Smoothness</span><div class="comp-bar"><div class="comp-fill" style="width:92%; background:#10B981;"></div></div><span class="comp-val" style="color:#10B981;">92</span></div>
+                        <div class="comp-row"><span class="comp-label">Braking</span><div class="comp-bar"><div class="comp-fill" style="width:90%; background:#10B981;"></div></div><span class="comp-val" style="color:#10B981;">90</span></div>
+                        <div class="comp-row"><span class="comp-label">Cornering</span><div class="comp-bar"><div class="comp-fill" style="width:84%; background:#10B981;"></div></div><span class="comp-val" style="color:#10B981;">84</span></div>
+                        <div class="comp-row"><span class="comp-label">Roads</span><div class="comp-bar"><div class="comp-fill" style="width:76%; background:#10B981;"></div></div><span class="comp-val" style="color:#10B981;">76</span></div>
+                    </div>
+                </div>
+
+                <div class="vehicle-card">
+                    <div class="v-top">
+                        <span class="v-reg">DR25763</span>
+                        <span class="v-model">VW Transporter T6.1</span>
+                        <span class="v-badge badge-green">20</span>
+                    </div>
+                    <div class="v-components">
+                        <div class="comp-row"><span class="comp-label">Smoothness</span><div class="comp-bar"><div class="comp-fill" style="width:92%; background:#10B981;"></div></div><span class="comp-val" style="color:#10B981;">92</span></div>
+                        <div class="comp-row"><span class="comp-label">Braking</span><div class="comp-bar"><div class="comp-fill" style="width:92%; background:#10B981;"></div></div><span class="comp-val" style="color:#10B981;">92</span></div>
+                        <div class="comp-row"><span class="comp-label">Cornering</span><div class="comp-bar"><div class="comp-fill" style="width:85%; background:#10B981;"></div></div><span class="comp-val" style="color:#10B981;">85</span></div>
+                        <div class="comp-row"><span class="comp-label">Roads</span><div class="comp-bar"><div class="comp-fill" style="width:78%; background:#10B981;"></div></div><span class="comp-val" style="color:#10B981;">78</span></div>
+                    </div>
+                </div>
+
+                <div class="vehicle-card">
+                    <div class="v-top">
+                        <span class="v-reg">CF14897</span>
+                        <span class="v-model">Toyota Proace</span>
+                        <span class="v-badge badge-green">16</span>
+                    </div>
+                    <div class="v-components">
+                        <div class="comp-row"><span class="comp-label">Smoothness</span><div class="comp-bar"><div class="comp-fill" style="width:94%; background:#10B981;"></div></div><span class="comp-val" style="color:#10B981;">94</span></div>
+                        <div class="comp-row"><span class="comp-label">Braking</span><div class="comp-bar"><div class="comp-fill" style="width:94%; background:#10B981;"></div></div><span class="comp-val" style="color:#10B981;">94</span></div>
+                        <div class="comp-row"><span class="comp-label">Cornering</span><div class="comp-bar"><div class="comp-fill" style="width:88%; background:#10B981;"></div></div><span class="comp-val" style="color:#10B981;">88</span></div>
+                        <div class="comp-row"><span class="comp-label">Roads</span><div class="comp-bar"><div class="comp-fill" style="width:82%; background:#10B981;"></div></div><span class="comp-val" style="color:#10B981;">82</span></div>
+                    </div>
+                </div>
+
+                <div class="vehicle-card">
+                    <div class="v-top">
+                        <span class="v-reg">BL68234</span>
+                        <span class="v-model">Nissan NV300</span>
+                        <span class="v-badge badge-green">12</span>
+                    </div>
+                    <div class="v-components">
+                        <div class="comp-row"><span class="comp-label">Smoothness</span><div class="comp-bar"><div class="comp-fill" style="width:96%; background:#10B981;"></div></div><span class="comp-val" style="color:#10B981;">96</span></div>
+                        <div class="comp-row"><span class="comp-label">Braking</span><div class="comp-bar"><div class="comp-fill" style="width:94%; background:#10B981;"></div></div><span class="comp-val" style="color:#10B981;">94</span></div>
+                        <div class="comp-row"><span class="comp-label">Cornering</span><div class="comp-bar"><div class="comp-fill" style="width:90%; background:#10B981;"></div></div><span class="comp-val" style="color:#10B981;">90</span></div>
+                        <div class="comp-row"><span class="comp-label">Roads</span><div class="comp-bar"><div class="comp-fill" style="width:85%; background:#10B981;"></div></div><span class="comp-val" style="color:#10B981;">85</span></div>
+                    </div>
+                </div>
+
+                <div class="vehicle-card">
+                    <div class="v-top">
+                        <span class="v-reg">EK47016</span>
+                        <span class="v-model">Ford Transit Custom</span>
+                        <span class="v-badge badge-green">8</span>
+                    </div>
+                    <div class="v-components">
+                        <div class="comp-row"><span class="comp-label">Smoothness</span><div class="comp-bar"><div class="comp-fill" style="width:98%; background:#10B981;"></div></div><span class="comp-val" style="color:#10B981;">98</span></div>
+                        <div class="comp-row"><span class="comp-label">Braking</span><div class="comp-bar"><div class="comp-fill" style="width:96%; background:#10B981;"></div></div><span class="comp-val" style="color:#10B981;">96</span></div>
+                        <div class="comp-row"><span class="comp-label">Cornering</span><div class="comp-bar"><div class="comp-fill" style="width:92%; background:#10B981;"></div></div><span class="comp-val" style="color:#10B981;">92</span></div>
+                        <div class="comp-row"><span class="comp-label">Roads</span><div class="comp-bar"><div class="comp-fill" style="width:88%; background:#10B981;"></div></div><span class="comp-val" style="color:#10B981;">88</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <a href="01_GREAT_BUILDERS_FLEET_REPORT_20May2026.html" class="back-link">&larr; Back to Fleet Report</a>
+        </div>
+
+        <div class="footer">
+            <p>FAIR Insurance | <a href="https://faircarinsurance.com/sv/integritetspolicy" target="_blank">Privacy Policy</a> | <a href="#">Contact</a></p>
+        </div>
+    </div>
+</body>
+</html>
